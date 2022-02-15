@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2021 LG Electronics, Inc.
+*      Copyright (c) 2021-2022 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import QtQuick 2.12
 import QmlAppComponents 0.1
 import QtGraphicalEffects 1.0
 
-Item {
+FocusScope {
     id: root
 
     property var clickAcion: function(index) {}
@@ -115,6 +115,14 @@ Item {
             horizontalListView.contentX -= horizontalListView.width * (direction === forward ? -1 : 1);
     }
 
+    Rectangle {
+        anchors.fill:horizontalListView
+        color:"white"
+        opacity: 0.3
+        radius: height / 3
+        visible: horizontalListView.activeFocus
+    }
+
     ListView {
         id: bgListView
         enabled: false
@@ -123,7 +131,6 @@ Item {
         spacing: appStyle.relativeXBasedOnFHD(root.spacing)
         model: dummyModel
         clip: true
-
         Component.onCompleted: {
             var i;
             for (i = 0 ; i < 7 ; i++) {
@@ -138,7 +145,6 @@ Item {
         orientation: horizontalListView.orientation
 
         delegate: bgDelegate
-        focus: false
 
         contentY: horizontalListView.contentY
         contentX: horizontalListView.contentX
@@ -331,6 +337,14 @@ Item {
         anchors.topMargin: parent.height * 0.05
         anchors.leftMargin: appStyle.relativeXBasedOnFHD(15)
         anchors.rightMargin: appStyle.relativeXBasedOnFHD(15)
+        focus: true
+
+        Keys.onReturnPressed: {
+            clickAcion(horizontalListView.currentIndex);
+        }
+        Keys.onEnterPressed: {
+            clickAcion(horizontalListView.currentIndex);
+        }
 
         orientation: ListView.Horizontal
         spacing: appStyle.relativeXBasedOnFHD(root.spacing)

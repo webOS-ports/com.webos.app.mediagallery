@@ -1,6 +1,6 @@
 ﻿/* @@@LICENSE
 *
-*      Copyright (c) 2021 LG Electronics, Inc.
+*      Copyright (c) 2021-2022 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -20,10 +20,12 @@ import QtQuick 2.6
 import "./View"
 import QmlAppComponents 0.1
 
-Item {
+FocusScope {
     id: root
 
     property var viewMain: _viewMain
+    focus: true
+    objectName: "uiRoot"
 
     Rectangle {
         anchors.fill: parent
@@ -77,5 +79,6 @@ Item {
         anchors.bottomMargin: appStyle.relativeYBasedOnFHD(10)
         anchors.leftMargin: appStyle.relativeXBasedOnFHD(10)
         anchors.rightMargin: appStyle.relativeXBasedOnFHD(10)
+        focus: true
     }
 }

@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2021 LG Electronics, Inc.
+*      Copyright (c) 2021-2022 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import QtQuick 2.6
 import QmlAppComponents 0.1
 import "./ListComponent/"
 
-Item {
+FocusScope {
     id: root
 
     objectName: "folderListScene"
@@ -93,6 +93,23 @@ Item {
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom
+        KeyNavigation.right: navForwardBtn
+        //focus: true
+
+        Keys.onReturnPressed: {
+            folderListComponent.movePage(folderListComponent.backward);
+        }
+        Keys.onEnterPressed: {
+            folderListComponent.movePage(folderListComponent.backward);
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            radius: width/2
+            color: "white"
+            opacity: 0.3
+            visible: navBackwardBtn.activeFocus
+        }
 
         Canvas {
             id: leftArrow
@@ -141,8 +158,10 @@ Item {
                 }
             }
             onEnabledChanged: {
-                if(enabled) navBackwardBtnArea.state = "released"
-                else navBackwardBtnArea.state = "disabled"
+                if(enabled)
+                    navBackwardBtnArea.state = "released"
+                else
+                    navBackwardBtnArea.state = "disabled"
             }
 
             states: [
@@ -179,6 +198,7 @@ Item {
         anchors.right: navForwardBtn.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom
+        focus: true
 
         elementWidth: height * 0.9
         elementHeight: height * 0.9
@@ -200,6 +220,22 @@ Item {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.right: parent.right
+        KeyNavigation.left: navBackwardBtn
+        Keys.onReturnPressed: {
+            folderListComponent.movePage(folderListComponent.forward);
+        }
+        Keys.onEnterPressed: {
+            folderListComponent.movePage(folderListComponent.forward);
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            radius: width/2
+            color: "white"
+            opacity: 0.3
+
+            visible: navForwardBtn.activeFocus
+        }
 
         Canvas {
             id: rightArrow

@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2021 LG Electronics, Inc.
+*      Copyright (c) 2021-2022 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ I                          I
 I                          -- DetailView
 */
 
-Item {
+FocusScope {
     id: root
 
     objectName: "mainScreenView"
@@ -80,8 +80,11 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
+        focus: true
 
         DebugBackground {}
+
+        KeyNavigation.down: mediaListScene
     }
 
     Rectangle {
@@ -113,11 +116,17 @@ Item {
         anchors.bottomMargin: appStyle.relativeYBasedOnFHD(appStyle.paddingInMainScreen)
 
         DebugBackground {}
+
+        KeyNavigation.up: folderListScene
     }
 
     property real clickX: 0
     property real clickY: 0
     property var selectedFileInfo
+
+    function getPreviewVisible() {
+        return previewImage.visible;
+    }
 
     function showPreview(filePath, x, y, _selectedFileInfo) {
         clickX = x + mediaListScene.x;
@@ -144,13 +153,13 @@ Item {
         State {
             name: "disappearAnimation"
             PropertyChanges { target: previewImage; visible: true }
-            PropertyChanges { target: photo; x:clickX; y:clickY; width: 453; height: 453}
+            PropertyChanges { target: photo; x:clickX; y:clickY; width: 453 * 0.66; height: 453 * 0.66}
         },
         State {
             name: "showList"
             PropertyChanges {target: previewImage; visible: false }
             PropertyChanges { target: photo; x:clickX; y:clickY;
-                width: 453; height: 453}
+                width: 453 * 0.66; height: 453 * 0.66}
         }
     ]
 
@@ -261,9 +270,20 @@ Item {
         }
     }
 
+    property var previewMouseArea: _previewMouseArea
     MouseArea {
+        id: _previewMouseArea
         anchors.fill: parent
         enabled: root.state == "preview" ? true : false
+
+        function previewClicked() {
+            if (selectedFileInfo === undefined) {
+                service.webOSService.singleCallService.callSimpleToast("Cannot open viewer for unknown reason.");
+            } else {
+                appLog.debug("call image viewer from preview");
+                service.webOSService.singleCallService.launchAppWithParam(stringSheet.viewerApps.image, selectedFileInfo);
+            }
+        }
 
         onClicked: {
             //check the clicked area is inside preview
@@ -271,13 +291,7 @@ Item {
             if(isInsidePreview === false) {
                 root.state = "disappearAnimation"
             } else {
-                if (selectedFileInfo === undefined) {
-                    service.webOSService.singleCallService.callSimpleToast("Cannot open viewer for unknown reason.");
-                } else {
-                    appLog.debug("call image viewer from preview");
-                    service.webOSService.singleCallService.launchAppWithParam(
-                                stringSheet.viewerApps.image, selectedFileInfo);
-                }
+                previewClicked();
             }
         }
 

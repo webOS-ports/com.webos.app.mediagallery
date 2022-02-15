@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2019-2020 LG Electronics, Inc.
+*      Copyright (c) 2019-2022 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import QtQuick 2.4
 import Eos.Controls 0.1
 import Eos.Style 0.1
 
-Rectangle {
+FocusScope {
     id: root
     property var desktopRoot: root
 
@@ -34,7 +34,13 @@ Rectangle {
 //  RSE
     width: 2880 * scaler
     height: 1620 * scaler
-    color: "black"
+    focus: true
+
+    Rectangle {
+        anchors.fill: parent
+        id: desktopBg
+        color: "black"
+    }
 
     // application
     Loader {
@@ -44,6 +50,7 @@ Rectangle {
         transformOrigin: Item.BottomLeft
         //anchors.fill: parent
         anchors.bottom: parent.bottom
+        focus: true
 
         onStatusChanged: {
             if (status === Loader.Ready)
@@ -55,6 +62,7 @@ Rectangle {
     Loader {
         id: debugWindowLoader
         source: "./DebugWindow/DebugWindow.qml"
+        focus: false
         x: 0
         y: parent.height * 0.05
         width: parent.width * 0.9

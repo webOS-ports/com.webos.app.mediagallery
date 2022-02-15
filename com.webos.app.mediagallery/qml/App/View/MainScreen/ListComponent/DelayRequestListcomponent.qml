@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2021 LG Electronics, Inc.
+*      Copyright (c) 2021-2022 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import QtQuick 2.12
 import QmlAppComponents 0.1
 import "../../../commonComponents"
 
-Item {
+FocusScope {
     id: root
 
     Component.onCompleted: {
@@ -35,19 +35,27 @@ Item {
 
     property var isScrolling: false
 
-    property var gridViewWidth: 200
-    property var gridViewHeight: 200
+    property var gridViewWidth: 200 - 10
+    property var gridViewHeight: 200 - 10
 
     property var delayLoadingTime: 300
 
-    property var spacingH: appStyle.relativeXBasedOnFHD(5)
-    property var spacingV: appStyle.relativeYBasedOnFHD(5)
+    property var spacingH: appStyle.relativeXBasedOnFHD(5) + 5
+    property var spacingV: appStyle.relativeYBasedOnFHD(5) + 5
+
+    Rectangle {
+        anchors.fill: bgGridView
+        color: "white"
+        opacity: 0.3
+        visible: thumbnailGridView.activeFocus
+    }
 
     GridView {
         id: bgGridView
         enabled: false
         anchors.fill: thumbnailGridView
         model: gridViewListModel.count < 20 ? dummyModel : thumbnailGridView.model
+        focus: false
 
         Component.onCompleted: {
             var i;
@@ -63,7 +71,7 @@ Item {
         cellWidth: thumbnailGridView.cellWidth
         cellHeight: thumbnailGridView.cellHeight
         delegate: bgDelegate
-        focus: false
+        //focus: false
 
         contentY: thumbnailGridView.contentY
         contentX: thumbnailGridView.contentX
@@ -96,6 +104,37 @@ Item {
             width: thumbnailGridView.cellWidth
             height: thumbnailGridView.cellHeight
 
+            Keys.onPressed: {
+                if (mainScreenView.getPreviewVisible()) {
+
+                    switch(event.key) {
+                    case Qt.Key_Return:
+                    case Qt.Key_Enter:
+                        mainScreenView.previewMouseArea.previewClicked();
+                        break;
+                    default:
+                        mainScreenView.state = "disappearAnimation"
+                        break;
+                    }
+                    event.accepted = true;
+                } else {
+                    switch(event.key) {
+                    case Qt.Key_Return:
+                    case Qt.Key_Enter:
+                        var absXY = mouseAreaInGridDelegate.absolutePosition(thumbnailGridView.currentIndex, 0,0);
+                        clickAction(thumbnailGridView.currentIndex,absXY.X,absXY.Y);
+                        event.accepted = true;
+                        break;
+                    }
+                }
+            }
+
+            Rectangle {
+                anchors.fill: parent
+                color: "white"
+                opacity: 0.5
+                visible: base.activeFocus
+            }
             Component.onCompleted: {
 //                appLog.debug("onCompleted :: " + index);
             }
@@ -165,6 +204,7 @@ Item {
                 }
             }
             MouseArea {
+                id: mouseAreaInGridDelegate
                 anchors.fill:parent
                 onClicked: {
                     if(isScrolling) return;

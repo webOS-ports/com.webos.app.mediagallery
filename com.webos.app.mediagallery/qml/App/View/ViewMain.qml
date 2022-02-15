@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2021 LG Electronics, Inc.
+*      Copyright (c) 2021-2022 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import Eos.Controls 0.1
 import Eos.Style 0.1
 import QmlAppComponents 0.1
 
-Item {
+FocusScope {
     id: root
 
     property bool isOnModeChanging: false;
@@ -82,6 +82,7 @@ Item {
 
     ModeView {
         id: modeView
+        focus: true
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
@@ -99,6 +100,8 @@ Item {
         objectName: "modeView"
         DebugBackground {}
 
+        KeyNavigation.right: mainScreenView
+
     }
 
     MainScreenView {
@@ -109,5 +112,7 @@ Item {
         anchors.rightMargin: appStyle.relativeXBasedOnFHD(appStyle.viewItemSpacing)
         anchors.top: modeView.top
         anchors.bottom: parent.bottom
+
+        KeyNavigation.left: modeView
     }
 }

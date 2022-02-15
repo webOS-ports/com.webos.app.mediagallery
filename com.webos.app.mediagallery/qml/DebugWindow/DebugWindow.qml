@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2020 LG Electronics, Inc.
+*      Copyright (c) 2020-2022 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -87,17 +87,34 @@ Rectangle {
 
         Button {
             id: sampleDbgButton2
-            text: "state : musicList"
+            text: "state : find!"
             width : 150
             height: 50
             style: DebugButtonStyle {}
 
             onClicked: {
-                var obj = findObjectByObjectName(desktopRoot,"viewMain");
-                obj.state = "MusicList"
+                var obj = findObjectByFocus(desktopRoot);
             }
         }
     }
+
+    function findObjectByFocus(root) {
+        for (var i = 0 ; i < root.children.length; i++ ) {
+            if (root.children[i].activeFocus === true) {
+                console.warn("...",root.children[i] + "_" + root.children[i].objectName,"[",root.children[i].focus,root.children[i].activeFocus,"]");
+                console.info("Found Correct Object",root.children[i], root.children[i].objectName);
+                return root.children[i];
+            }
+            else {
+                var branch = findObjectByFocus(root.children[i]);
+                console.warn("...",root.children[i] + "_" + root.children[i].objectName,"[",root.children[i].focus,root.children[i].activeFocus,"]");
+                if (branch !== 0)
+                    return branch;
+            }
+        }
+        return 0;
+    }
+
 
     function findObjectByObjectName(root,targetName) {
         for (var i = 0 ; i < root.children.length; i++ ) {

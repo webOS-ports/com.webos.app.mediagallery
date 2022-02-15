@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2021 LG Electronics, Inc.
+*      Copyright (c) 2021-2022 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -24,9 +24,10 @@ import "../commonComponents"
     ModeView --- MenuList
 */
 
-Item {
+FocusScope {
     id: root
     clip: true
+    //focus: true
 
     signal notifyModeClicked(int index)
 
@@ -43,6 +44,8 @@ Item {
         id: menuList
         anchors.fill: parent
         menuElements: stringSheet.modeView.mode
+        focus: true
+        opacity: root.activeFocus ? 1.0 : 0.6
 
         onCurrentIndexChanged: {
             root.notifyModeClicked(currentIndex);

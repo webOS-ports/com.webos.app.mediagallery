@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2021 LG Electronics, Inc.
+*      Copyright (c) 2021-2022 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 import QtQuick 2.6
 
-Item {
+FocusScope {
     id: root
 
     objectName: "menuList"
@@ -82,9 +82,14 @@ Item {
             }
 
             MouseArea {
+                id: btnRoot
                 anchors.fill: parent
+                hoverEnabled: true
                 onClicked: {
                     listView.currentIndex = index;
+                }
+                onEntered: {
+                    base.forceActiveFocus();
                 }
             }
         }
@@ -95,7 +100,7 @@ Item {
         anchors.fill: parent
         model: menuListModel
         delegate: listDelegate
-        interactive: root.interactive
+        interactive: true//root.interactive
         focus: true
     }
 }
